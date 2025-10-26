@@ -6,22 +6,44 @@ exports.LoginPage = class LoginPage {
    * @param {import('@playwright/test').Page} page
    */
   constructor(page) {
+        const emptyLoginErrorMessage = "Revisa que todos los campos estén rellenos";
+        const modal = page.locator('ion-modal'); // This selector will help to scope the locators inside the modal
+        const alert = page.locator('ion-alert'); // This is a helper to interact with the elements inside the alert
         this.page = page;
-        this.loginButton = page.getByRole('button', { name: 'Acceder'});
-        this.closeModalButton = page.locator('.closeModal'); // This selector is to check the login modal is visible
-        this.usernameImput = page.locator('name=username');
-        this.passwordImput = page.locator('name=password');
+        this.acceptCookiesButton = page.getByRole('button', { name: 'Aceptar' });
+        this.loginButton = page.locator('.btAccess'); // Selector for the login button on the homepage
+        this.usernameInput = modal.locator('input[name="username"]');
+        this.passwordInput = modal.locator('input[name="password"]');
         this.submitButton = page.locator('id=btnaccess');
+
+        this.emptyLoginErrorMsg = alert.getByText(emptyLoginErrorMessage);
+        this.okButton = alert.locator('button').filter({ hasText: 'OK' });
   }
   async goToHomePage() {
         await this.page.goto('/');
         await expect(this.page).toHaveURL(/.*codere.es/); // Verify we are on the correct page
+        if (await this.acceptCookiesButton.isVisible()) {
+          await this.acceptCookiesButton.click(); // Accpets cookies to avoid blocking other elements
+        }
   }    
   async openLoginModal() {
         await this.loginButton.isVisible();
         await this.loginButton.click();
   }
   async checkLoginModalIsVisible() {
-        await this.closeModalButton.isVisible(); // Verify the login modal is visible
-  }}
+        await expect(this.submitButton).toBeVisible(); // Verify the login modal is visible
 
+  }
+  async fillLoginForm(username, password) {
+        await expect(this.usernameInput).toBeEnabled();
+        await this.usernameInput.fill(username);
+        await expect(this.passwordInput).toBeEnabled();
+        await this.passwordInput.fill(password);
+        await this.submitButton.click();
+  }
+  async checkEmptyLoginForm(){
+        await expect(this.emptyLoginErrorMsg).toBeVisible();
+        await expect(this.okButton).toBeVisible();
+        await this.okButton.click();
+  }
+}
