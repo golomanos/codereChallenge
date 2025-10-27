@@ -41,7 +41,7 @@ exports.LoginPage = class LoginPage {
         await this.loginButton.click();
   }
   async checkLoginModalIsVisible() {
-        await expect(this.submitButton).toBeVisible(); // Verify the login modal is visible
+        await expect(this.usernameInput).toBeVisible(); // Verify the login modal is visible
 
   }
   async fillLoginForm(username, password) {
