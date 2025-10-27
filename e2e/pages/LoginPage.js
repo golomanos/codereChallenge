@@ -1,4 +1,6 @@
+import { checkAccessDenied } from '../utils/checkAccess.js';
 const { expect } = require('@playwright/test');
+
 
 // @ts-check
 exports.LoginPage = class LoginPage {
@@ -14,17 +16,14 @@ exports.LoginPage = class LoginPage {
         this.loginButton = page.locator('.btAccess'); // Selector for the login button on the homepage
         this.usernameInput = modal.locator('input[name="username"]');
         this.passwordInput = modal.locator('input[name="password"]');
-        this.submitButton = page.locator('id=btnaccess');
+        this.submitButton = modal.locator('id=btnaccess').filter({ hasText: 'Acceder' });
         this.emptyLoginErrorMsg = alert.getByText(emptyLoginErrorMessage);
         this.okButton = alert.locator('button').filter({ hasText: 'OK' });
-        this.accessDeniedMesg = page.getByRole('heading', { name: 'Access Denied' })
         
   }
   async goToHomePage() {
-        const response = await this.page.goto('/');
-        if (response?.status() === 403) {
-            throw new Error('Access Denied - 403');
-        }
+        const reponse = await this.page.goto('/');
+        await checkAccessDenied(reponse);
         await expect(this.page).toHaveURL(/.*codere.es/); // Verify we are on the correct page
         if (await this.acceptCookiesButton.isVisible()) {
           await this.acceptCookiesButton.click(); // Accepts cookies to avoid blocking other elements
