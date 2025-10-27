@@ -15,17 +15,22 @@ exports.LoginPage = class LoginPage {
         this.usernameInput = modal.locator('input[name="username"]');
         this.passwordInput = modal.locator('input[name="password"]');
         this.submitButton = page.locator('id=btnaccess');
-
         this.emptyLoginErrorMsg = alert.getByText(emptyLoginErrorMessage);
         this.okButton = alert.locator('button').filter({ hasText: 'OK' });
+        this.accessDeniedMesg = page.getByRole('heading', { name: 'Access Denied' })
+        
   }
   async goToHomePage() {
-        await this.page.goto('/');
+        const response = await this.page.goto('/');
+        if (response?.status() === 403) {
+            throw new Error('Access Denied - 403');
+        }
         await expect(this.page).toHaveURL(/.*codere.es/); // Verify we are on the correct page
         if (await this.acceptCookiesButton.isVisible()) {
-          await this.acceptCookiesButton.click(); // Accpets cookies to avoid blocking other elements
+          await this.acceptCookiesButton.click(); // Accepts cookies to avoid blocking other elements
         }
-  }    
+    }
+      
   async openLoginModal() {
         await this.loginButton.isVisible();
         await this.loginButton.click();
