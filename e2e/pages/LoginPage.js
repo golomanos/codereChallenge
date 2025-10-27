@@ -9,6 +9,7 @@ exports.LoginPage = class LoginPage {
    */
   constructor(page) {
         const emptyLoginErrorMessage = "Revisa que todos los campos estén rellenos";
+        const wrongCredentialsErrorMessage = " Por favor, revisa los datos y vuelve a intentarlo. Ten en cuenta el uso de mayúsculas y minúsculas en tu contraseña.";
         const modal = page.locator('ion-modal'); // This selector will help to scope the locators inside the modal
         const alert = page.locator('ion-alert'); // This is a helper to interact with the elements inside the alert
         this.page = page;
@@ -19,6 +20,8 @@ exports.LoginPage = class LoginPage {
         this.submitButton = modal.locator('id=btnaccess').filter({ hasText: 'Acceder' });
         this.emptyLoginErrorMsg = alert.getByText(emptyLoginErrorMessage);
         this.okButton = alert.locator('button').filter({ hasText: 'OK' });
+        this.wrongCredentialsErrorMsg = alert.getByText(wrongCredentialsErrorMessage);
+        
         
   }
   async goToHomePage() {
@@ -47,6 +50,11 @@ exports.LoginPage = class LoginPage {
   }
   async checkEmptyLoginForm(){
         await expect(this.emptyLoginErrorMsg).toBeVisible();
+        await expect(this.okButton).toBeVisible();
+        await this.okButton.click();
+  }
+  async checkWrongCredentialsLogin(){
+        await expect(this.wrongCredentialsErrorMsg).toBeVisible();
         await expect(this.okButton).toBeVisible();
         await this.okButton.click();
   }
