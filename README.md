@@ -36,6 +36,6 @@ npm init playwright@latest
 npm install
 
 # Run tests
-npx playwright test --project firefox --workers 1
+npx playwright test 
 
 
