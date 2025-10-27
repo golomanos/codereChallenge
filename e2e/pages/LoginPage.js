@@ -10,6 +10,7 @@ exports.LoginPage = class LoginPage {
   constructor(page) {
         const emptyLoginErrorMessage = "Revisa que todos los campos estén rellenos";
         const wrongCredentialsErrorMessage = " Por favor, revisa los datos y vuelve a intentarlo. Ten en cuenta el uso de mayúsculas y minúsculas en tu contraseña.";
+        const blockedUserErrorMessage = "Por razones de seguridad por favor, cambia tu contraseña para poder acceder.";
         const modal = page.locator('ion-modal'); // This selector will help to scope the locators inside the modal
         const alert = page.locator('ion-alert'); // This is a helper to interact with the elements inside the alert
         this.page = page;
@@ -21,6 +22,8 @@ exports.LoginPage = class LoginPage {
         this.emptyLoginErrorMsg = alert.getByText(emptyLoginErrorMessage);
         this.okButton = alert.locator('button').filter({ hasText: 'OK' });
         this.wrongCredentialsErrorMsg = alert.getByText(wrongCredentialsErrorMessage);
+        this.blockedUserErrorMsg = alert.getByText(blockedUserErrorMessage);
+        this.cancelButton = alert.locator('button').filter({ hasText: 'Cancelar' });
         
         
   }
@@ -57,5 +60,10 @@ exports.LoginPage = class LoginPage {
         await expect(this.wrongCredentialsErrorMsg).toBeVisible();
         await expect(this.okButton).toBeVisible();
         await this.okButton.click();
+  }
+  async checkBlockedUserLogin(){
+        await expect(this.blockedUserErrorMsg).toBeVisible();
+        await expect(this.cancelButton).toBeVisible();
+        await this.cancelButton.click();
   }
 }
