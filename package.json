@@ -3,7 +3,9 @@
   "version": "1.0.1",
   "description": "a task requested in an interview process to use playwright in order to automate a flow",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test --reporter=list"
+  },
   "author": "Omar Farinez",
   "license": "ISC",
   "devDependencies": {
